@@ -1,25 +1,19 @@
 import Image from "next/image"
-import Link from "next/link"
 import Grid from "@mui/material/Grid"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
-import { getSquad } from "../../../components/api/Requests";
 import gridStyles from "../../../styles/Grid.module.css"
+import PlayersClient from "../../../clients/PlayersClient"
 
-const Player = ({ squad, player }: any) => {
-    let playerData;
+const PlayerStats = ({ squad, playerId }: any) => {
+    let player;
 
-    console.log(squad)
-    squad.map((s: any) => JSON.parse(s).response.map((p: any) => {
-        if (p.player.id == player){
-            playerData = p;
+    for (let p of squad){
+        if (p.id == playerId){
+            player = p;
         }
-    }));
-    
-    if (playerData == undefined){
-        playerData = JSON.parse(squad).response[0].player;
     }
     
     return (
@@ -34,23 +28,23 @@ const Player = ({ squad, player }: any) => {
                     <Grid container
                     >
                         <Grid item className={gridStyles.item}>
-                            <Image src={playerData.player.photo} width="100" height="100"></Image>
+                            <Image src={player.photo} width="100" height="100"></Image>
                         </Grid>
                         <Grid item className={gridStyles.item}>
-                            <h2>{playerData.player.name}</h2>
-                            <h4>{playerData.statistics[0].games.position}</h4>
+                            <h2>{player.name}</h2>
+                            <h4>{player.position}</h4>
                         </Grid>
                         <Grid item className={gridStyles.item}> 
-                            <h2>{playerData.player.nationality}</h2>
-                            <h4>Age: {playerData.player.age}</h4>
+                            <h2>{player.nationality}</h2>
+                            <h4>Age: {player.age}</h4>
                         </Grid>
                         <Grid item className={gridStyles.item}>
-                            <h2>{playerData.player.height}</h2>
-                            <h4>{playerData.player.weight}</h4>
+                            <h2>{player.height}</h2>
+                            <h4>{player.weight}</h4>
                         </Grid>
                     </Grid>
                     <hr/>
-                    <Grid container spacing={50}>
+                    {/* <Grid container spacing={50}>
                         <Grid item>
                             <h2>{playerData.statistics[0].league.name}</h2>
                         </Grid>
@@ -83,7 +77,7 @@ const Player = ({ squad, player }: any) => {
                             <h4>{playerData.statistics[0].cards.yellowred}</h4>
                             <h4>{playerData.statistics[0].cards.red}</h4>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                 </CardContent>
                 <CardActions>
                 </CardActions>
@@ -92,7 +86,7 @@ const Player = ({ squad, player }: any) => {
     )
 }
 
-export default Player;
+export default PlayerStats;
 
 export async function getServerSideProps(context: any) {
     const params = context.params.id.split("-");
@@ -100,14 +94,16 @@ export async function getServerSideProps(context: any) {
     const league = params[0];
     const season = params[1];
     const team = params[2];
-    const player = params[3];
+    const playerId = params[3];
 
-    const squad = await getSquad(league, season, team);
+    const client = new PlayersClient(undefined);
+
+    const squad = await client.getPlayersAsync(league, season, team);
 
     return {
         props: {
             squad,
-            player
+            playerId
         }
     } 
 }

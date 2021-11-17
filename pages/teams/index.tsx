@@ -1,43 +1,61 @@
-import { Button, Box, Grid, InputLabel, MenuItem, Select, FormControl } from "@mui/material";
+import { Box, Grid, InputLabel, MenuItem, Select, FormControl } from "@mui/material";
 import { useState, useEffect } from "react";
-import { getTeamsVenues } from "../../components/api/Requests";
+import TeamsClient, { Team } from "../../clients/TeamsClient";
 import TeamsList from "../../components/teams/TeamsList";
 
+interface State {
+    league: string,
+    season: string,
+    teams: Team[]
+}
+
+const initialState: State = {
+    league: "",
+    season: "",
+    teams: []
+}
+
 const Teams = () => {
-    const [ league, setLeague ] = useState("");
-    const [ season, setSeason ] = useState("");
-    const [ teamsVenues, setTeamsVenues ] = useState(null);
+    const [ state, setState ] = useState(initialState);
 
     const handleSetLeague = (event: any) => {
-        setLeague(event.target.value);
+        setState({
+            ...state,
+            league: event.target.value
+        });
     }
 
     const handleSetSeason = (event: any) => {
-        setSeason(event.target.value);
+        setState({
+            ...state,
+            season: event.target.value
+        });
     }
 
-    // Variante mit Button
-    // async function handleShowTeams(){
-    //     if (league != "" && season != ""){
-    //         getTeamsVenues(league, season).then(result => {
-    //             setTeamsVenues(result);
-    //           });
-    //     }
-    // }
-
-    // mit useEffect()
     useEffect(() => {
-        if (league != "" && season != ""){
-            getTeamsVenues(league, season).then(result => { setTeamsVenues(result); });
+        async function fetchData() {
+            const client = new TeamsClient(undefined);
+
+            if (state.league != "" && state.season != ""){
+                const response = await client.getTeamsAsync(state.league, state.season);
+
+                setState({
+                    ...state,
+                    teams: response
+                })
+            }
         }
 
-        return  setTeamsVenues(null);
-    }, [ league, season ]);
+        fetchData();
+    }, [ state.league, state.season ]);
 
     return (
         <div>
             <Grid container
                 spacing={5}
+                sx={{
+                    marginBottom: 5
+                }}
             >
                 <Grid item
                     xs={12} sm={6} md={6}
@@ -51,7 +69,7 @@ const Teams = () => {
                             <Select
                                 labelId="league-select-label"
                                 id="league-select"
-                                value={league}
+                                value={state.league}
                                 label="League"
                                 onChange={handleSetLeague}
                             >
@@ -71,7 +89,7 @@ const Teams = () => {
                             <Select
                                 labelId="season-select-label"
                                 id="season-select"
-                                value={season}
+                                value={state.season}
                                 label="Season"
                                 onChange={handleSetSeason}
                             >
@@ -81,24 +99,12 @@ const Teams = () => {
                         </FormControl>
                     </Box>       
                 </Grid>
-                <Grid item>
-                    {/* <Button
-                        onClick={handleShowTeams}
-                    >
-                        Show Teams
-                    </Button> */}
-                </Grid>
             </Grid>
-            {teamsVenues && (
-                <TeamsList teamsVenues={teamsVenues} league={league} season={season}/>
+            {state.teams && (
+                <TeamsList teams={state.teams} league={state.league} season={state.season}/>
             )}
         </div>
     )
 }
 
 export default Teams;
-
-// alle Props functions funktionieren nur auf pages !!!!!!
-// export async function getStaticProps() {
-//     return getTeamsVenuesAsProps("78", "2020");
-// }

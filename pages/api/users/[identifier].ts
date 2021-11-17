@@ -1,6 +1,6 @@
 import { getAccessToken, withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { NextApiHandler } from "next";
-import UserClient, { User } from "../../../clients/UserClient"
+import UserClient, { User } from "../../../clients/UsersClient"
 
 export default withApiAuthRequired(async function (req,  res) {
     try {

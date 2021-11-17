@@ -7,26 +7,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Grid from "@mui/material/Grid";
-import { getSquad } from "../../components/api/Requests";
+import PersonAdd from "@mui/icons-material/PersonAdd"
 import PlayersList from "../../components/players/PlayersList";
-
-interface Player {
-    id: number,
-    firstName: string,
-    lastName: string,
-    name: string,
-    birth: {
-        date: string,
-        country: string,
-        place: string
-    },
-    age: number,
-    nationality: string,
-    height: string,
-    weight: string,
-    injured: boolean,
-    photo: string
-}
+import PlayersClient, { Player } from "../../clients/PlayersClient";
+import List from "@mui/material/List";
+import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 
 const teamIds: any = {
     "2020": {
@@ -41,42 +26,55 @@ const teamIds: any = {
     }
 }
 
-const teamSelection = () => {
-    const [ league, setLeague ] = useState("");
-    const [ season, setSeason ] = useState("");
-    const [ players, setPlayers ] = useState<Array<Player>>([]);
- 
+interface State {
+    league: string,
+    season: string,
+    players: Player[]
+}
+
+const initialState: State = {
+    league: "",
+    season: "",
+    players: []
+}
+
+const TeamSelection = () => {
+    const [ state, setState ] = useState(initialState);
+
     const handleSetLeague = (event: any) => {
-        setLeague(event.target.value);
+        setState({
+            ...state,
+            league: event.target.value
+        });
     }
 
     const handleSetSeason = (event: any) => {
-        setSeason(event.target.value);
+        setState({
+            ...state,
+            season: event.target.value
+        });
     }
 
     useEffect(() => {
-        let players: any = [];
+        async function fetchData() {
+            let players: Player[] = [];
+            const client = new PlayersClient(undefined);
 
-        if (league != "" && season != ""){
+            if (state.league != "" && state.season != ""){
+                for (let team of teamIds[state.season][state.league]){
+                    const response = await client.getPlayersAsync(state.league, state.season, team);
+                    players = [...players, ...response];
+                }
+            }
 
-            teamIds[season][league].map((team: any) => {
-
-                getSquad(league, season, team).then(result => {
-                    result.map((squad: any) => {
-
-                        JSON.parse(squad).response.map((player: any) => {
-                            players.push(player.player);
-                        })
-                        setPlayers(players);
-                    });
-                })
-            })
+            setState({
+                ...state,
+                players
+            });
         }
 
-        
-    }, [ league, season ]);
-
-    console.log(players); 
+        fetchData();
+    }, [ state.league, state.season ]);
 
     return (
         <div>
@@ -99,7 +97,7 @@ const teamSelection = () => {
                                 aria-label="League"
                                 // defaultValue="     "
                                 name="league-buttons"
-                                value={league}
+                                value={state.league}
                                 onChange={handleSetLeague}
                             >
                                 <FormControlLabel value="78" control={<Radio/>} label="1. Bundesliga"/>
@@ -125,7 +123,7 @@ const teamSelection = () => {
                                 aria-label="Season"
                                 // defaultValue="     "
                                 name="season-buttons"
-                                value={season}
+                                value={state.season}
                                 onChange={handleSetSeason}
                             >
                                 <FormControlLabel value="2020" control={<Radio/>} label="2020/21"/>
@@ -135,11 +133,37 @@ const teamSelection = () => {
                     </Box>
                 </Grid>
             </Grid>
-            {players && players.map(player => (
-               <h1>{player.name}</h1> 
-            ))}
+            <List
+                sx={{
+                    width: "50%"
+                }}
+            >
+                {state.players && state.players.map(player => (
+                    <ListItem key={player.id}
+                        secondaryAction={
+                            <IconButton edge="end" aria-label="draft">
+                                <PersonAdd>
+
+                                </PersonAdd>
+                            </IconButton>
+                        }
+                        sx={{
+                            border: "1px solid darkslategrey",
+                            marginTop: 0.3
+                        }}
+                    >
+                        <ListItemAvatar>
+                            <Avatar src={player.photo}/>
+                        </ListItemAvatar>
+                        <ListItemText 
+                            primary={player.name}
+                            secondary={player.position}
+                        />
+                    </ListItem>
+                ))}
+            </List>
         </div>
     )
 }
 
-export default teamSelection;
+export default TeamSelection;
