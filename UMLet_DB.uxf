@@ -1,0 +1,40 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>50</x><y>40</y><w>150</w><h>190</h></coordinates><panel_attributes>User
+--
+Id: int
+Identifier: string
+Email: string
+Teams: IList&lt;UserTeam&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>40</y><w>150</w><h>190</h></coordinates><panel_attributes>UserTeam
+--
+Id: int
+Name: string
+UserId: int
+User (FK): User
+Season (FK):Season</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>340</y><w>150</w><h>190</h></coordinates><panel_attributes>Team
+--
+Id: int
+Name: string
+Logo: string
+LeagueId: League</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>230</x><y>320</y><w>150</w><h>90</h></coordinates><panel_attributes>Season
+--
+Id: int
+Identifier: string
+Name: string</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>940</x><y>340</y><w>150</w><h>190</h></coordinates><panel_attributes>League
+--
+Id: int
+Name: string
+Logo: string
+Flag: string
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>230</x><y>450</y><w>150</w><h>100</h></coordinates><panel_attributes>Player
+--
+Id: int
+...
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>40</y><w>150</w><h>190</h></coordinates><panel_attributes>UserTeamSquad
+--
+Id: int
+...
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>190</x><y>120</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>80;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>410</x><y>120</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>80;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>470</x><y>340</y><w>180</w><h>190</h></coordinates><panel_attributes>Player_Season_Assignment
+--
+Player_Id: int
+Season_Id: int
+TeamId (FK): int
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>370</x><y>360</y><w>120</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>100;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>370</x><y>440</y><w>120</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>100;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>640</x><y>420</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>80;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>860</x><y>420</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>80;10;10;10</additional_attributes></element></diagram>

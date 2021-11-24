@@ -18,7 +18,8 @@ export const NavBar = () => {
                 sx={{ 
                     height: navBarHeight,
                     width: "auto",
-                    marginLeft: `${drawerWidth}px`  
+                    marginLeft: `${drawerWidth}px`,
+                    backgroundColor: "darkred" 
                 }}
             >
                 <Toolbar>

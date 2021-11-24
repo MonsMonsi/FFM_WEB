@@ -2,13 +2,13 @@ import { Drawer, Box, Link, List, ListItem, ListItemText } from "@mui/material"
 import Logo from "./Logo";
 
 export const drawerWidth = 170;
-const options = [{ name: "Teams", route: "/teams"}, { name: "Pick a Team", route: "/teamSelection"}, { name: "Option 3", route: "/teams"}];
+const options = [{ text: "Teams", route: "/teams"}, { text: "Pick a Team", route: "/teamSelection"}, { text: "Option 3", route: "/teams"}];
 
 export default function SideBar() {
     return (
         <Box
             sx={{ 
-                display: "flex",
+                display: "flex"
             }}
         >
             <Drawer
@@ -16,7 +16,8 @@ export default function SideBar() {
                     width: drawerWidth,
                     "& .MuiDrawer-paper": {
                         width: drawerWidth,
-                        boxSizing: "border-box"
+                        boxSizing: "border-box",
+                        backgroundColor: "lightgray"
                     }
                 }}
                 variant="permanent"
@@ -28,9 +29,9 @@ export default function SideBar() {
                         <ListItem 
                             button
                             component={Link} href={o.route}
-                            key={o.name}
+                            key={o.text}
                         >
-                            <ListItemText primary={o.name}/>
+                            <ListItemText primary={o.text}/>
                         </ListItem>
                     ))}
                 </List>

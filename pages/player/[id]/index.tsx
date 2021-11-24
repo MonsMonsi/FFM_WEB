@@ -5,17 +5,10 @@ import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
 import gridStyles from "../../../styles/Grid.module.css"
-import PlayersClient from "../../../clients/PlayersClient"
+import PlayersClient, { Player } from "../../../clients/PlayersClient"
 
-const PlayerStats = ({ squad, playerId }: any) => {
-    let player;
+const PlayerStats = ({ player }: any) => {
 
-    for (let p of squad){
-        if (p.id == playerId){
-            player = p;
-        }
-    }
-    
     return (
         <div>
              <Card
@@ -44,12 +37,12 @@ const PlayerStats = ({ squad, playerId }: any) => {
                         </Grid>
                     </Grid>
                     <hr/>
-                    {/* <Grid container spacing={50}>
+                    <Grid container spacing={50}>
                         <Grid item>
-                            <h2>{playerData.statistics[0].league.name}</h2>
+                            <h2>{player.statistics[0].league.name}</h2>
                         </Grid>
                         <Grid item>
-                            
+                            {/* a different competition */}
                         </Grid>
                     </Grid>
                     <Grid container spacing={25}>
@@ -66,18 +59,18 @@ const PlayerStats = ({ squad, playerId }: any) => {
                             <h4>Red-Cards:</h4>
                         </Grid>
                         <Grid item>
-                            <h4>{playerData.statistics[0].games.appearences}</h4>
-                            <h4>{playerData.statistics[0].games.lineups}</h4>
-                            <h4>{playerData.statistics[0].games.minutes}</h4>
+                            <h4>{player.statistics[0].games.appearences}</h4>
+                            <h4>{player.statistics[0].games.lineups}</h4>
+                            <h4>{player.statistics[0].games.minutes}</h4>
                             <hr/>
-                            <h4>{playerData.statistics[0].goals.total}</h4>
-                            <h4>{playerData.statistics[0].goals.assists != null ? playerData.statistics[0].goals.assists : 0}</h4>
+                            <h4>{player.statistics[0].goals.total}</h4>
+                            <h4>{player.statistics[0].goals.assists != null ? player.statistics[0].goals.assists : 0}</h4>
                             <hr/>
-                            <h4>{playerData.statistics[0].cards.yellow}</h4>
-                            <h4>{playerData.statistics[0].cards.yellowred}</h4>
-                            <h4>{playerData.statistics[0].cards.red}</h4>
+                            <h4>{player.statistics[0].cards.yellow}</h4>
+                            <h4>{player.statistics[0].cards.yellowred}</h4>
+                            <h4>{player.statistics[0].cards.red}</h4>
                         </Grid>
-                    </Grid> */}
+                    </Grid>
                 </CardContent>
                 <CardActions>
                 </CardActions>
@@ -98,12 +91,11 @@ export async function getServerSideProps(context: any) {
 
     const client = new PlayersClient(undefined);
 
-    const squad = await client.getPlayersAsync(league, season, team);
+    const player = await client.getPlayerDetailAsync(league, season, team, playerId);
 
     return {
         props: {
-            squad,
-            playerId
+            player
         }
     } 
 }

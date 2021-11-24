@@ -16,7 +16,8 @@ export interface Player {
     height: string,
     weight: string,
     injured: boolean,
-    photo: string
+    photo: string,
+    statistics: []
 }
 
 class PlayersClient {
@@ -53,7 +54,8 @@ class PlayersClient {
                     height: p.player.height,
                     weight: p.player.weight,
                     injured: p.player.injured,
-                    photo: p.player.photo
+                    photo: p.player.photo,
+                    statistics: p.statistics
                 }
 
                 players.push(newPlayer);
@@ -61,6 +63,20 @@ class PlayersClient {
         }
         
         return players;
+    }
+
+    async getPlayerDetailAsync(league: string, season: string, team: string, playerId: string) {
+        const players = await this.getPlayersAsync(league, season, team);
+
+        let player: Player = players[0];
+
+        for (let p of players){
+            if (p.id.toString() == playerId){
+                player = p;
+            }
+        }
+
+        return player;
     }
 }
 

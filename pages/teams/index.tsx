@@ -1,7 +1,7 @@
 import { Box, Grid, InputLabel, MenuItem, Select, FormControl } from "@mui/material";
 import { useState, useEffect } from "react";
 import TeamsClient, { Team } from "../../clients/TeamsClient";
-import TeamsList from "../../components/teams/TeamsList";
+import TeamsList from "../../components/lists/TeamsList"
 
 interface State {
     league: string,

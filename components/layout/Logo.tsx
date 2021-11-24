@@ -10,8 +10,8 @@ export default function Logo() {
                 height: 100,
                 textAlign: "center",
                 justifyContent: "center",
-                color: "rgb(46, 1, 1)",
-                background: "lightblue"
+                color: "azure",
+                background: "darkred"
             }} 
         >
             <Typography>

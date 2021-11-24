@@ -1,7 +1,7 @@
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
 import { Team } from "../../clients/TeamsClient";
-import TeamCard from "./TeamCard"
+import TeamCard from "../cards/TeamCard"
 
 export default function TeamsList({ teams, league, season }: any) {
     return (

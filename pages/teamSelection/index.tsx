@@ -1,18 +1,12 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import Box from "@mui/material/Box"
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+import { useEffect, useReducer } from "react";
 import Grid from "@mui/material/Grid";
-import PersonAdd from "@mui/icons-material/PersonAdd"
-import PlayersList from "../../components/players/PlayersList";
 import PlayersClient, { Player } from "../../clients/PlayersClient";
-import List from "@mui/material/List";
-import { Avatar, IconButton, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { Chip, Divider } from "@mui/material";
+import RadioButtonGroupSimple from "../../components/radioButtons/RadioButtonGroupSimple";
+import PlayersList from "../../components/lists/PlayersList";
+import DraftedPlayersList from "../../components/lists/DraftedPlayersList";
 
+// teamId-Array 
 const teamIds: any = {
     "2020": {
         "78": [ "157", "159", "160", "161", "162", "163", "164", "165", "167", "168", "169", "170", "172", "173", "174", "182", "188", "192" ],
@@ -26,34 +20,73 @@ const teamIds: any = {
     }
 }
 
+// ACTIONS variable for reducer function
+export const ACTIONS = {
+    SET_LEAGUE: "set-league",
+    SET_SEASON: "set-season",
+    SET_PLAYERS: "set-players",
+    CLEAR_PLAYERS: "clear-players",
+    DRAFT_PLAYER: "draft-player",
+    RESET_USERTEAM: "reset-userteam",
+    TOGGLE_OPEN: "toggle-open"
+}
+
+// reducer function
+function reducer(state: State, action: any){
+    switch(action.type){
+        case ACTIONS.SET_LEAGUE:
+            return { ...state, league: action.payload.id };
+        case ACTIONS.SET_SEASON:
+            return { ...state, season: action.payload.id };
+        case ACTIONS.SET_PLAYERS:
+            return { ...state, players: action.payload.players };
+        case ACTIONS.CLEAR_PLAYERS:
+            return { ...state, players: [] };
+        case ACTIONS.DRAFT_PLAYER:
+            return { ...state, userTeam: [ ...state.userTeam, action.payload.player ] };
+        case ACTIONS.RESET_USERTEAM:
+            return { ...state, userTeam: [] }
+        case ACTIONS.TOGGLE_OPEN:
+            return { ...state, open: !state.open }
+        default:
+            return state;
+    }
+}
+
+// objects for component-information
+const RadioButtonsContentLeague = {
+    name: "league-buttons",
+    formLabel: "League",
+    formControlLabel: [ { value: "78", label: "1. Bundesliga" }, { value: "61", label: "Ligue 1" }, { value: "39", label: "Premier League" } ],
+    action: ACTIONS.SET_LEAGUE
+}
+
+const RadioButtonsContentSeason = {
+    name: "season-buttons",
+    formLabel: "Season",
+    formControlLabel: [ { value: "2020", label: "2020/21" }, { value: "2021", label: "2021/22" } ],
+    action: ACTIONS.SET_SEASON
+}
+
+// state interface, initialState
 interface State {
     league: string,
     season: string,
-    players: Player[]
+    players: Player[],
+    userTeam: Player[],
+    open: boolean
 }
 
 const initialState: State = {
     league: "",
     season: "",
-    players: []
+    players: [],
+    userTeam: [],
+    open: true
 }
 
 const TeamSelection = () => {
-    const [ state, setState ] = useState(initialState);
-
-    const handleSetLeague = (event: any) => {
-        setState({
-            ...state,
-            league: event.target.value
-        });
-    }
-
-    const handleSetSeason = (event: any) => {
-        setState({
-            ...state,
-            season: event.target.value
-        });
-    }
+    const [ state, dispatch ] = useReducer(reducer, initialState );
 
     useEffect(() => {
         async function fetchData() {
@@ -67,10 +100,7 @@ const TeamSelection = () => {
                 }
             }
 
-            setState({
-                ...state,
-                players
-            });
+            dispatch({ type: ACTIONS.SET_PLAYERS, payload: { players: players } })
         }
 
         fetchData();
@@ -81,87 +111,31 @@ const TeamSelection = () => {
             <Grid container
                 spacing={25}
             >
+                {/* RadioButtonGroup - choose league */}
                 <Grid item>
-                    <Box
-                        sx={{
-                            border: "2px solid darkslategrey",
-                            width: 220,
-                            height: 200,
-                            textAlign: "center",
-                            paddingTop: 2
-                        }}
-                    >
-                        <FormControl component="fieldset">
-                            <FormLabel component="legend">League</FormLabel>
-                            <RadioGroup
-                                aria-label="League"
-                                // defaultValue="     "
-                                name="league-buttons"
-                                value={state.league}
-                                onChange={handleSetLeague}
-                            >
-                                <FormControlLabel value="78" control={<Radio/>} label="1. Bundesliga"/>
-                                <FormControlLabel value="61" control={<Radio/>} label="Ligue 1"/>
-                                <FormControlLabel value="39" control={<Radio/>} label="Premier League"/>
-                            </RadioGroup>
-                        </FormControl>
-                    </Box>
+                    <RadioButtonGroupSimple content={RadioButtonsContentLeague} dispatch={dispatch}/>
                 </Grid>
+                {/* RadioButtonGroup - choose season */}
                 <Grid item>
-                    <Box
-                        sx={{
-                            border: "2px solid darkslategrey",
-                            width: 220,
-                            height: 200,
-                            textAlign: "center",
-                            paddingTop: 2
-                        }}
-                    >
-                        <FormControl component="fieldset">
-                            <FormLabel component="legend">Season</FormLabel>
-                            <RadioGroup
-                                aria-label="Season"
-                                // defaultValue="     "
-                                name="season-buttons"
-                                value={state.season}
-                                onChange={handleSetSeason}
-                            >
-                                <FormControlLabel value="2020" control={<Radio/>} label="2020/21"/>
-                                <FormControlLabel value="2021" control={<Radio/>} label="2021/22"/>
-                            </RadioGroup>
-                        </FormControl>
-                    </Box>
+                    <RadioButtonGroupSimple content={RadioButtonsContentSeason} dispatch={dispatch}/>
                 </Grid>
             </Grid>
-            <List
-                sx={{
-                    width: "50%"
-                }}
+            <Divider sx={{ marginTop: 5, marginBottom: 5 }}>
+                <Chip label={(state.league != "" && state.season != "") ? "Pick your team" : "Choose a League and a Season"}/>
+            </Divider>
+            <Grid container
+                spacing={5}
             >
-                {state.players && state.players.map(player => (
-                    <ListItem key={player.id}
-                        secondaryAction={
-                            <IconButton edge="end" aria-label="draft">
-                                <PersonAdd>
-
-                                </PersonAdd>
-                            </IconButton>
-                        }
-                        sx={{
-                            border: "1px solid darkslategrey",
-                            marginTop: 0.3
-                        }}
-                    >
-                        <ListItemAvatar>
-                            <Avatar src={player.photo}/>
-                        </ListItemAvatar>
-                        <ListItemText 
-                            primary={player.name}
-                            secondary={player.position}
-                        />
-                    </ListItem>
-                ))}
-            </List>
+                {/* List of drafted Players */}
+                <Grid item>
+                    <DraftedPlayersList userTeam={state.userTeam} open={state.open} dispatch={dispatch} />
+                </Grid>
+                {/* List of available Players */}
+                <Grid item>
+                    <PlayersList players={state.players} userTeam={state.userTeam} dispatch={dispatch} />
+                </Grid>
+            </Grid>
+            
         </div>
     )
 }

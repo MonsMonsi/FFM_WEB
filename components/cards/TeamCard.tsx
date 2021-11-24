@@ -10,12 +10,16 @@ import Paper from "@mui/material/Paper";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import IconButton from "@mui/material/IconButton"
+import IconButton, { IconButtonProps } from "@mui/material/IconButton"
 import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
 import Divider from "@mui/material/Divider"
 
-const ExpandMore = styled((props) => {
+interface ExpandMoreProps extends IconButtonProps {
+    expand: boolean;
+}
+
+const ExpandMore = styled((props: ExpandMoreProps) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
   })(({ theme, expand }) => ({
