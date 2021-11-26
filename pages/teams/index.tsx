@@ -1,8 +1,17 @@
-import { Box, Grid, InputLabel, MenuItem, Select, FormControl } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Grid } from "@mui/material";
+import { useReducer, useEffect } from "react";
 import TeamsClient, { Team } from "../../clients/TeamsClient";
-import TeamsList from "../../components/lists/TeamsList"
+import TeamsList from "../../components/lists/TeamsList";
+import SelectSimple from "../../components/selects/SelectSimple";
 
+// actions constant for reducer function
+const ACTIONS = {
+    SET_LEAGUE: "set-league",
+    SET_SEASON: "set-season",
+    SET_TEAMS: "set-teams"
+}
+
+// state interface and initial state
 interface State {
     league: string,
     season: string,
@@ -15,22 +24,39 @@ const initialState: State = {
     teams: []
 }
 
+// reducer function
+function reducer(state: State, action: any){
+    switch(action.type){
+        case ACTIONS.SET_SEASON:
+            return { ...state, season: action.payload.id };
+        case ACTIONS.SET_LEAGUE:
+            return { ...state, league: action.payload.id };
+        case ACTIONS.SET_TEAMS:
+            return { ...state, teams: action.payload.teams }
+        default:
+            return state;
+    }
+}
+
+// objects for component information
+const SelectsContentLeague = {
+    labelId: "league-select-label",
+    selectId: "league-select",
+    inputLabel: "League",
+    menuItem: [ { value: "78", label: "1. Bundesliga" }, { value: "61", label: "Ligue 1" }, { value: "39", label: "Premier League" } ],
+    action: ACTIONS.SET_LEAGUE
+}
+
+const SelectsContentSeason = {
+    labelId: "season-select-label",
+    selectId: "season-select",
+    inputLabel: "Season",
+    menuItem: [ { value: "2020", label: "2020/21" }, { value: "2021", label: "2021/22" } ],
+    action: ACTIONS.SET_SEASON
+}
+
 const Teams = () => {
-    const [ state, setState ] = useState(initialState);
-
-    const handleSetLeague = (event: any) => {
-        setState({
-            ...state,
-            league: event.target.value
-        });
-    }
-
-    const handleSetSeason = (event: any) => {
-        setState({
-            ...state,
-            season: event.target.value
-        });
-    }
+    const [ state, dispatch ] = useReducer(reducer, initialState);
 
     useEffect(() => {
         async function fetchData() {
@@ -39,10 +65,7 @@ const Teams = () => {
             if (state.league != "" && state.season != ""){
                 const response = await client.getTeamsAsync(state.league, state.season);
 
-                setState({
-                    ...state,
-                    teams: response
-                })
+                dispatch({ type: ACTIONS.SET_TEAMS, payload: { teams: response } })
             }
         }
 
@@ -63,41 +86,14 @@ const Teams = () => {
                         justifyItems: "center"
                     }}
                 >
-                    <Box>
-                        <FormControl fullWidth>
-                            <InputLabel id="league-select-label">League</InputLabel>
-                            <Select
-                                labelId="league-select-label"
-                                id="league-select"
-                                value={state.league}
-                                label="League"
-                                onChange={handleSetLeague}
-                            >
-                                <MenuItem value="78">1.Bundesliga</MenuItem>
-                                <MenuItem value="61">Ligue 1</MenuItem>
-                                <MenuItem value="39">Premier League</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
+                    {/* Select - choose league */}
+                    <SelectSimple content={SelectsContentLeague} dispatch={dispatch} />
                 </Grid>
                 <Grid item
                     xs={12} sm={6} md={6}
-                > 
-                    <Box>
-                        <FormControl fullWidth>
-                            <InputLabel id="season-select-label">Season</InputLabel>
-                            <Select
-                                labelId="season-select-label"
-                                id="season-select"
-                                value={state.season}
-                                label="Season"
-                                onChange={handleSetSeason}
-                            >
-                                <MenuItem value={"2021"}>2021/22</MenuItem>
-                                <MenuItem value={"2020"}>2020/21</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>       
+                >
+                    {/* Select - choose season */}
+                    <SelectSimple content={SelectsContentSeason} dispatch={dispatch} />      
                 </Grid>
             </Grid>
             {state.teams && (

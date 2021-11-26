@@ -22,9 +22,9 @@ export default function RadioButtonGroupSimple({ content, dispatch }: any) {
                     name={content.name}
                     value={choice}
                     onChange={e => {
-                        setChoice(e.target.value)
-                        dispatch({ type: content.action, payload: { id: e.target.value } })}
-                    }
+                        setChoice(e.target.value);
+                        dispatch({ type: content.action, payload: { id: e.target.value } })
+                    }}
                 >
                     {content.formControlLabel.map((f: any) => (
                         <FormControlLabel key={f.value} value={f.value} control={<Radio/>} label={f.label}/>

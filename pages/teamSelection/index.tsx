@@ -86,7 +86,7 @@ const initialState: State = {
 }
 
 const TeamSelection = () => {
-    const [ state, dispatch ] = useReducer(reducer, initialState );
+    const [ state, dispatch ] = useReducer(reducer, initialState);
 
     useEffect(() => {
         async function fetchData() {
