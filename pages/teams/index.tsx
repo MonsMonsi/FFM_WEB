@@ -1,8 +1,8 @@
-import { Grid } from "@mui/material";
+import { Grid, Container } from "@mui/material";
 import { useReducer, useEffect } from "react";
 import TeamsClient, { Team } from "../../clients/TeamsClient";
 import TeamsList from "../../components/lists/TeamsList";
-import SelectSimple from "../../components/selects/SelectSimple";
+import SelectStyled from "../../components/selects/SelectStyled";
 
 // actions constant for reducer function
 const ACTIONS = {
@@ -40,19 +40,19 @@ function reducer(state: State, action: any){
 
 // objects for component information
 const SelectsContentLeague = {
-    labelId: "league-select-label",
     selectId: "league-select",
-    inputLabel: "League",
+    inputLabelId: "league-select-label",
+    inputLabelText: "League",
     menuItem: [ { value: "78", label: "1. Bundesliga" }, { value: "61", label: "Ligue 1" }, { value: "39", label: "Premier League" } ],
-    action: ACTIONS.SET_LEAGUE
+    action: ACTIONS.SET_LEAGUE,
 }
 
 const SelectsContentSeason = {
-    labelId: "season-select-label",
     selectId: "season-select",
-    inputLabel: "Season",
+    inputLabelId: "season-select-label",
+    inputLabelText: "Season",
     menuItem: [ { value: "2020", label: "2020/21" }, { value: "2021", label: "2021/22" } ],
-    action: ACTIONS.SET_SEASON
+    action: ACTIONS.SET_SEASON,
 }
 
 const Teams = () => {
@@ -73,33 +73,23 @@ const Teams = () => {
     }, [ state.league, state.season ]);
 
     return (
-        <div>
-            <Grid container
-                spacing={5}
-                sx={{
-                    marginBottom: 5
-                }}
-            >
-                <Grid item
-                    xs={12} sm={6} md={6}
-                    sx={{
-                        justifyItems: "center"
-                    }}
-                >
-                    {/* Select - choose league */}
-                    <SelectSimple content={SelectsContentLeague} dispatch={dispatch} />
-                </Grid>
-                <Grid item
-                    xs={12} sm={6} md={6}
-                >
-                    {/* Select - choose season */}
-                    <SelectSimple content={SelectsContentSeason} dispatch={dispatch} />      
-                </Grid>
+        <Grid container
+            justifyContent="space-evenly"
+        >
+            <Grid item>
+                {/* Select - choose league */}
+                <SelectStyled content={SelectsContentLeague} dispatch={dispatch} />
             </Grid>
-            {state.teams && (
-                <TeamsList teams={state.teams} league={state.league} season={state.season}/>
-            )}
-        </div>
+            <Grid item>
+                {/* Select - choose season */}
+                <SelectStyled content={SelectsContentSeason} dispatch={dispatch} /> 
+            </Grid>
+            <Container>
+                {state.teams && (
+                    <TeamsList teams={state.teams} league={state.league} season={state.season}/>
+                )}
+            </Container>
+        </Grid>
     )
 }
 

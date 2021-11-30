@@ -1,9 +1,10 @@
-import { NavBar } from "./NavBar"
-import Head from "next/head"
-import Grid from "@mui/material/Grid"
-import Container from "@mui/material/Container"
-import SideBar from "./SideBar"
+import { NavBar } from "./NavBar";
+import Head from "next/head";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
+import SideBar from "./SideBar";
 import { drawerWidth } from './SideBar';
+import styles from "./Layout.module.css"
 
 export default function Layout({ children }: any) {
     return (
@@ -13,24 +14,23 @@ export default function Layout({ children }: any) {
                 <meta name="viewport" content="initial-scale=1, width=device-width"/>
             </Head>
             <NavBar/>
-            <Container>
+            <main className={styles.content}
+                style={{ marginLeft: `${drawerWidth}px` }}
+            >
                 <SideBar/>
-                <Grid container 
-                    sx={{
-                        width: "auto",
-                        marginLeft: `${drawerWidth}px` 
-                    }}
-                    spacing={10}
-                >
-                    <Grid item xs={12} sm={12} md={12}
-                        sx={{
-                            marginTop: 10
-                        }}
-                    >
-                        {children}
-                    </Grid>
+                {children}
+            </main>
+            
+            {/* <Grid container
+                sx={{ 
+                    width: "auto", height: "auto", minHeight: "100vh", marginLeft: `${drawerWidth}px`, 
+                    backgroundColor: "#5e87c250" 
+                }}
+            >
+                <Grid item>
+                    {children}
                 </Grid>
-            </Container>
+            </Grid> */}
         </div>
     )
 }

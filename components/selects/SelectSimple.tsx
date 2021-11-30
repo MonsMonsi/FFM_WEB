@@ -3,7 +3,7 @@ import { Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material"
 
 export default function SelectSimple({ content, dispatch }: any) {
     const [ choice, setChoice ] = useState("");
-
+    
     return (
         <Box>
             <FormControl fullWidth>
