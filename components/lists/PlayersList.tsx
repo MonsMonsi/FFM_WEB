@@ -9,7 +9,7 @@ import { Player } from '../../clients/PlayersClient';
 import { ACTIONS } from '../../pages/teamSelection';
 
 export default function PlayersList({ players, userTeam, dispatch }: any) {
-    function getPosition() {
+    const getPosition = () => {
         let position: string;
 
         switch (userTeam.length) {
@@ -30,10 +30,13 @@ export default function PlayersList({ players, userTeam, dispatch }: any) {
     return position;
     }
 
+    const fullName = (first: string, last: string) => {
+        return `${first} ${last}`;
+    }
     return (
         <List
             sx={{
-                width: "auto",
+                width: "450px",
                 minWidth: "350px"
             }}
         >
@@ -55,7 +58,7 @@ export default function PlayersList({ players, userTeam, dispatch }: any) {
                         <Avatar src={player.photo}/>
                     </ListItemAvatar>
                     <ListItemText 
-                        primary={player.name}
+                        primary={fullName(player.firstName, player.lastName)}
                         secondary={player.position}
                     />
                 </ListItem>

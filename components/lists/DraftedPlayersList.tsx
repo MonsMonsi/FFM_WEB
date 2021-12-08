@@ -23,85 +23,86 @@ const StyledList = styled(List)<{ component?: React.ElementType }>({
 export default function DraftedPlayersList({ userTeam, open, dispatch }: any) {
     const  { user, isLoading }  = useUser();
 
+    const fullName = (first: string, last: string) => {
+        return `${first} ${last}`;
+    }
+
     return (
-        <Box sx={{ display: "flex" }}>
-                        <ThemeProvider
-                            theme={createTheme({
-                                palette: {
-                                    mode: "dark",
-                                    primary: { main: "rgb(102, 157, 246)" },
-                                    background: { paper: "rgb(5, 30, 52)" }
-                                }
-                            })}
-                        >
-                            <Paper elevation={2} 
-                                sx={{
-                                    width: "auto", 
-                                    minWidth: "350px" 
+        <div>
+            <ThemeProvider
+                theme={createTheme({
+                    palette: {
+                        mode: "dark",
+                        primary: { main: "rgb(102, 157, 246)" },
+                        background: { paper: "rgb(5, 30, 52)" }
+                    }
+                })}
+            >
+                <Paper elevation={2} 
+                    sx={{
+                        width: "450px", 
+                        minWidth: "350px",
+                    }}
+                >
+                    <StyledList sx={{ width: "auto" }}>
+                        <ListItem>
+                            <ListItemIcon sx={{ fontSize: 20 }}>
+                                {(user != undefined && user.picture != undefined) ? <Image src={user.picture} width="50" height="50"/> : <div>🔥</div>}    
+                            </ListItemIcon>
+                            <ListItemText
+                                sx={{ my: 0 }}
+                                primary={user != undefined ? user.name : "Placeholder"}
+                                primaryTypographyProps={{
+                                    fontSize: 20,
+                                    fontWeight: "bold",
+                                    letterSpacing: 0,
                                 }}
+                            />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemButton
+                                onClick={() => dispatch({ type: ACTIONS.TOGGLE_OPEN })}
                             >
-                                <StyledList>
-                                    <ListItem>
-                                        <ListItemIcon sx={{ fontSize: 20 }}>
-                                            {(user != undefined && user.picture != undefined) ? <Image src={user.picture} width="50" height="50"/> : <div>🔥</div>}    
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            sx={{ my: 0 }}
-                                            primary={user != undefined ? user.name : "Placeholder"}
-                                            primaryTypographyProps={{
-                                                fontSize: 20,
-                                                fontWeight: "bold",
-                                                letterSpacing: 0,
-                                            }}
-                                        />
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListItemButton
-                                            onClick={() => dispatch({ type: ACTIONS.TOGGLE_OPEN })}
-                                        >
-                                            <ListItemText
-                                                primary="Your drafted Team:"
-                                                primaryTypographyProps= {{
-                                                    color: "primary",
-                                                    fontWeight: "medium",
-                                                    variant: "body2",
-                                                }}
-                                            />
-                                            <KeyboardArrowDown
-                                                sx={{
-                                                    transform: open ? "rotate(-180deg)" : "rotate(0)",
-                                                    transition: "0.5s"
-                                                }}
-                                            />
-                                        </ListItemButton>
-                                        <Tooltip title="Delete Team">
-                                            <IconButton
-                                                size= "large"
-                                                onClick={() => dispatch({ type: ACTIONS.RESET_USERTEAM })}
-                                            >
-                                                <Delete sx={{ opacity: 0.6, "&:hover, &:focus": { opacity: 1 } }}/>
-                                            </IconButton>
-                                        </Tooltip>
-                                    </ListItem>
-                                    {open && userTeam && userTeam.map((player: Player) => (
-                                        <ListItem key={player.id}
-                                            sx={{
-                                                border: "1px dotted azure",
-                                                marginBottom: 0.3
-                                            }}
-                                        >
-                                            <ListItemAvatar>
-                                                <Avatar src={player.photo}/>
-                                            </ListItemAvatar>
-                                            <ListItemText 
-                                                primary={player.name}
-                                                secondary={player.position}
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </StyledList>
-                            </Paper>
-                        </ThemeProvider>
-                    </Box>
+                                <ListItemText
+                                    primary="Your drafted Team:"
+                                    primaryTypographyProps= {{
+                                        color: "primary",
+                                        fontWeight: "medium",
+                                        variant: "body2",
+                                    }}
+                                />
+                                <KeyboardArrowDown
+                                    sx={{
+                                        transform: open ? "rotate(-180deg)" : "rotate(0)",
+                                        transition: "0.5s"
+                                    }}
+                                />
+                            </ListItemButton>
+                            <Tooltip title="Delete Team">
+                                <IconButton
+                                    size= "large"
+                                    onClick={() => dispatch({ type: ACTIONS.RESET_USERTEAM })}
+                                >
+                                    <Delete sx={{ opacity: 0.6, "&:hover, &:focus": { opacity: 1 } }}/>
+                                </IconButton>
+                            </Tooltip>
+                        </ListItem>
+                        {open && userTeam && userTeam.map((player: Player) => (
+                            <ListItem key={player.id}
+                                sx={{ mb: 0.3 }}
+                            >
+                                <ListItemAvatar>
+                                    <Avatar src={player.photo}/>
+                                </ListItemAvatar>
+                                <ListItemText 
+                                    primary={fullName(player.firstName, player.lastName)}
+                                    secondary={player.position}
+                                />
+                            </ListItem>
+                        ))}
+                    </StyledList>
+                </Paper>
+            </ThemeProvider>
+        </div>
     )
 }

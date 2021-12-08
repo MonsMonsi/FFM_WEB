@@ -3,5 +3,6 @@
     width: auto;
     min-height: 100vh;
     height: auto;
-    margin: 0 0 0 100px;
+    margin: 0;
+    text-align: center;
 }

@@ -63,7 +63,7 @@ const Teams = () => {
             const client = new TeamsClient(undefined);
 
             if (state.league != "" && state.season != ""){
-                const response = await client.getTeamsAsync(state.league, state.season);
+                const response = await client.getAllTeamsAsync();
 
                 dispatch({ type: ACTIONS.SET_TEAMS, payload: { teams: response } })
             }

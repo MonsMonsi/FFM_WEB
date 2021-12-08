@@ -1,32 +1,46 @@
 import { getRequest } from "./"
 
+// export interface Team {
+//     team: {
+//         id: number,
+//         name: string,
+//         country: string,
+//         founded: number,
+//         national: boolean,
+//         logo: string
+//     },
+//     venue: {
+//         id: number,
+//         name: string,
+//         address: string,
+//         city: string,
+//         capacity: number,
+//         surface: string,
+//         image: string
+//     }
+// }
+
 export interface Team {
-    team: {
+    id: number,
+    name: string,
+    logo: string,
+    leagueId : number,
+    league: {
         id: number,
         name: string,
         country: string,
-        founded: number,
-        national: boolean,
-        logo: string
-    },
-    venue: {
-        id: number,
-        name: string,
-        address: string,
-        city: string,
-        capacity: number,
-        surface: string,
-        image: string
+        logo: string,
+        flag: string,
     }
 }
 
 class TeamsClient {
     constructor(private token: string | undefined) { }
 
-    async getTeamsAsync(league: string, season: string) {
-        const response = await getRequest<any>(`teams?league=${league}&season=${season}`, this.token);
+    async getAllTeamsAsync() {
+        const response = await getRequest<Team>(`teams/all`, this.token);
         
-        return response.response;
+        return response;
     }
 }
 

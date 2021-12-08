@@ -1,29 +1,14 @@
 import { useEffect, useReducer } from "react";
 import Grid from "@mui/material/Grid";
 import PlayersClient, { Player } from "../../clients/PlayersClient";
-import { Chip, Divider } from "@mui/material";
+import { Chip, Divider, Container, Typography } from "@mui/material";
 import RadioButtonGroupSimple from "../../components/radioButtons/RadioButtonGroupSimple";
 import PlayersList from "../../components/lists/PlayersList";
 import DraftedPlayersList from "../../components/lists/DraftedPlayersList";
 
-// teamId-Array 
-const teamIds: any = {
-    "2020": {
-        "78": [ "157", "159", "160", "161", "162", "163", "164", "165", "167", "168", "169", "170", "172", "173", "174", "182", "188", "192" ],
-        "61": [ "80" ],
-        "39": [ "33" ]
-    },
-    "2021": {
-        "78": [ "157" ],
-        "61": [ "80" ],
-        "39": [ "39" ]
-    }
-}
-
 // ACTIONS variable for reducer function
 export const ACTIONS = {
     SET_LEAGUE: "set-league",
-    SET_SEASON: "set-season",
     SET_PLAYERS: "set-players",
     CLEAR_PLAYERS: "clear-players",
     DRAFT_PLAYER: "draft-player",
@@ -36,8 +21,6 @@ function reducer(state: State, action: any){
     switch(action.type){
         case ACTIONS.SET_LEAGUE:
             return { ...state, league: action.payload.id };
-        case ACTIONS.SET_SEASON:
-            return { ...state, season: action.payload.id };
         case ACTIONS.SET_PLAYERS:
             return { ...state, players: action.payload.players };
         case ACTIONS.CLEAR_PLAYERS:
@@ -61,17 +44,9 @@ const RadioButtonsContentLeague = {
     action: ACTIONS.SET_LEAGUE
 }
 
-const RadioButtonsContentSeason = {
-    name: "season-buttons",
-    formLabel: "Season",
-    formControlLabel: [ { value: "2020", label: "2020/21" }, { value: "2021", label: "2021/22" } ],
-    action: ACTIONS.SET_SEASON
-}
-
 // state interface, initialState
 interface State {
     league: string,
-    season: string,
     players: Player[],
     userTeam: Player[],
     open: boolean
@@ -79,7 +54,6 @@ interface State {
 
 const initialState: State = {
     league: "",
-    season: "",
     players: [],
     userTeam: [],
     open: true
@@ -90,52 +64,58 @@ const TeamSelection = () => {
 
     useEffect(() => {
         async function fetchData() {
-            let players: Player[] = [];
             const client = new PlayersClient(undefined);
 
-            if (state.league != "" && state.season != ""){
-                for (let team of teamIds[state.season][state.league]){
-                    const response = await client.getPlayersAsync(state.league, state.season, team);
-                    players = [...players, ...response];
-                }
+            if (state.league != ""){
+                const response = await client.getPlayersFromDb(state.league);
+                dispatch({ type: ACTIONS.SET_PLAYERS, payload: { players: response } })
             }
-
-            dispatch({ type: ACTIONS.SET_PLAYERS, payload: { players: players } })
         }
 
         fetchData();
-    }, [ state.league, state.season ]);
+    }, [ state.league ]);
 
     return (
         <div>
-            <Grid container
-                spacing={25}
+            <Container>
+                <Typography variant="h3"
+                    sx={{ mb: 5, width: "100%", color: "darkred", backgroundColor: "azure", border: "1px solid darkred" }}
+                >
+                    Stellen Sie nun ihr Team zusammen!    
+                </Typography>
+            </Container>
+            <Grid container rowSpacing={2} columnSpacing={5}
+                justifyContent="center"
+                alignItems="center"
             >
-                {/* RadioButtonGroup - choose league */}
-                <Grid item>
+                <Grid item xs={12} sm={6}>
+                    <Typography variant="h5">
+                        Bitte wählen Sie eine Liga!
+                    </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
                     <RadioButtonGroupSimple content={RadioButtonsContentLeague} dispatch={dispatch}/>
                 </Grid>
-                {/* RadioButtonGroup - choose season */}
-                <Grid item>
-                    <RadioButtonGroupSimple content={RadioButtonsContentSeason} dispatch={dispatch}/>
-                </Grid>
             </Grid>
-            <Divider sx={{ marginTop: 5, marginBottom: 5 }}>
-                <Chip label={(state.league != "" && state.season != "") ? "Pick your team" : "Choose a League and a Season"}/>
+
+            <Divider sx={{ mt: 8, mb: 8 }}>
+                <Chip label={(state.league != "") ? "Pick your Team" : "Choose a League"} sx={{ color: "azure", backgroundColor: "darkred" }}/>
             </Divider>
-            <Grid container
-                spacing={5}
+
+            {state.league != "" &&(
+                <Grid container
+                justifyContent="center"
             >
                 {/* List of drafted Players */}
-                <Grid item>
+                <Grid item xs={12} sm={6}>
                     <DraftedPlayersList userTeam={state.userTeam} open={state.open} dispatch={dispatch} />
                 </Grid>
                 {/* List of available Players */}
-                <Grid item>
+                <Grid item xs={12} sm={6}>
                     <PlayersList players={state.players} userTeam={state.userTeam} dispatch={dispatch} />
                 </Grid>
             </Grid>
-            
+            )}
         </div>
     )
 }

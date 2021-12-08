@@ -7,95 +7,96 @@ import CardActions from "@mui/material/CardActions"
 import gridStyles from "../../../styles/Grid.module.css"
 import PlayersClient, { Player } from "../../../clients/PlayersClient"
 
-const PlayerStats = ({ player }: any) => {
+const PlayerStats = () => {
 
-    return (
-        <div>
-             <Card
-            >
-                <CardHeader>
+    return(<div></div>)
+    // return (
+    //     <div>
+    //          <Card
+    //         >
+    //             <CardHeader>
                     
-                </CardHeader> 
+    //             </CardHeader> 
                     
-                <CardContent>
-                    <Grid container
-                    >
-                        <Grid item className={gridStyles.item}>
-                            <Image src={player.photo} width="100" height="100"></Image>
-                        </Grid>
-                        <Grid item className={gridStyles.item}>
-                            <h2>{player.name}</h2>
-                            <h4>{player.position}</h4>
-                        </Grid>
-                        <Grid item className={gridStyles.item}> 
-                            <h2>{player.nationality}</h2>
-                            <h4>Age: {player.age}</h4>
-                        </Grid>
-                        <Grid item className={gridStyles.item}>
-                            <h2>{player.height}</h2>
-                            <h4>{player.weight}</h4>
-                        </Grid>
-                    </Grid>
-                    <hr/>
-                    <Grid container spacing={50}>
-                        <Grid item>
-                            <h2>{player.statistics[0].league.name}</h2>
-                        </Grid>
-                        <Grid item>
-                            {/* a different competition */}
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={25}>
-                        <Grid item>
-                            <h4>Appearences:</h4>
-                            <h4>Lineups:</h4>
-                            <h4>Minutes:</h4>
-                            <hr/>
-                            <h4>Goals:</h4>
-                            <h4>Assists:</h4>
-                            <hr/>
-                            <h4>Yellow-Cards:</h4>
-                            <h4>Yellow-Red-Cards:</h4>
-                            <h4>Red-Cards:</h4>
-                        </Grid>
-                        <Grid item>
-                            <h4>{player.statistics[0].games.appearences}</h4>
-                            <h4>{player.statistics[0].games.lineups}</h4>
-                            <h4>{player.statistics[0].games.minutes}</h4>
-                            <hr/>
-                            <h4>{player.statistics[0].goals.total}</h4>
-                            <h4>{player.statistics[0].goals.assists != null ? player.statistics[0].goals.assists : 0}</h4>
-                            <hr/>
-                            <h4>{player.statistics[0].cards.yellow}</h4>
-                            <h4>{player.statistics[0].cards.yellowred}</h4>
-                            <h4>{player.statistics[0].cards.red}</h4>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-                <CardActions>
-                </CardActions>
-            </Card>
-        </div>
-    )
+    //             <CardContent>
+    //                 <Grid container
+    //                 >
+    //                     <Grid item className={gridStyles.item}>
+    //                         <Image src={player.photo} width="100" height="100"></Image>
+    //                     </Grid>
+    //                     <Grid item className={gridStyles.item}>
+    //                         <h2>{player.name}</h2>
+    //                         <h4>{player.position}</h4>
+    //                     </Grid>
+    //                     <Grid item className={gridStyles.item}> 
+    //                         <h2>{player.nationality}</h2>
+    //                         <h4>Age: {player.age}</h4>
+    //                     </Grid>
+    //                     <Grid item className={gridStyles.item}>
+    //                         <h2>{player.height}</h2>
+    //                         <h4>{player.weight}</h4>
+    //                     </Grid>
+    //                 </Grid>
+    //                 <hr/>
+    //                 <Grid container spacing={50}>
+    //                     <Grid item>
+    //                         <h2>{player.statistics[0].league.name}</h2>
+    //                     </Grid>
+    //                     <Grid item>
+    //                         {/* a different competition */}
+    //                     </Grid>
+    //                 </Grid>
+    //                 <Grid container spacing={25}>
+    //                     <Grid item>
+    //                         <h4>Appearences:</h4>
+    //                         <h4>Lineups:</h4>
+    //                         <h4>Minutes:</h4>
+    //                         <hr/>
+    //                         <h4>Goals:</h4>
+    //                         <h4>Assists:</h4>
+    //                         <hr/>
+    //                         <h4>Yellow-Cards:</h4>
+    //                         <h4>Yellow-Red-Cards:</h4>
+    //                         <h4>Red-Cards:</h4>
+    //                     </Grid>
+    //                     <Grid item>
+    //                         <h4>{player.statistics[0].games.appearences}</h4>
+    //                         <h4>{player.statistics[0].games.lineups}</h4>
+    //                         <h4>{player.statistics[0].games.minutes}</h4>
+    //                         <hr/>
+    //                         <h4>{player.statistics[0].goals.total}</h4>
+    //                         <h4>{player.statistics[0].goals.assists != null ? player.statistics[0].goals.assists : 0}</h4>
+    //                         <hr/>
+    //                         <h4>{player.statistics[0].cards.yellow}</h4>
+    //                         <h4>{player.statistics[0].cards.yellowred}</h4>
+    //                         <h4>{player.statistics[0].cards.red}</h4>
+    //                     </Grid>
+    //                 </Grid>
+    //             </CardContent>
+    //             <CardActions>
+    //             </CardActions>
+    //         </Card>
+    //     </div>
+    // )
 }
 
 export default PlayerStats;
 
-export async function getServerSideProps(context: any) {
-    const params = context.params.id.split("-");
+// export async function getServerSideProps(context: any) {
+//     const params = context.params.id.split("-");
 
-    const league = params[0];
-    const season = params[1];
-    const team = params[2];
-    const playerId = params[3];
+//     const league = params[0];
+//     const season = params[1];
+//     const team = params[2];
+//     const playerId = params[3];
 
-    const client = new PlayersClient(undefined);
+//     const client = new PlayersClient(undefined);
 
-    const player = await client.getPlayerDetailAsync(league, season, team, playerId);
+//     const player = await client.getPlayerDetailAsync(league, season, team, playerId);
 
-    return {
-        props: {
-            player
-        }
-    } 
-}
+//     return {
+//         props: {
+//             player
+//         }
+//     } 
+// }

@@ -12,6 +12,7 @@ const Home: NextPage = () => {
     <div>
       <h1>Willkommen bei FFM-WEB!</h1>
       <p>Was möchten Sie tun, {user.name}</p>
+      
     </div>
   );
 }
