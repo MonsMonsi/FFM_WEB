@@ -3,7 +3,7 @@ import Box from "@mui/material/Box"
 import { Player } from "../../clients/PlayersClient";
 import { Avatar, createTheme, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Paper, styled, ThemeProvider, Tooltip } from "@mui/material";
 import { useUser } from "@auth0/nextjs-auth0";
-import { Delete, KeyboardArrowDown } from "@mui/icons-material";
+import { Delete, KeyboardArrowDown, PersonRemove } from "@mui/icons-material";
 import { ACTIONS } from "../../pages/teamSelection";
 
 const StyledList = styled(List)<{ component?: React.ElementType }>({
@@ -40,11 +40,11 @@ export default function DraftedPlayersList({ userTeam, open, dispatch }: any) {
             >
                 <Paper elevation={2} 
                     sx={{
-                        width: "450px", 
-                        minWidth: "350px",
+                        width: "100%", 
+                        maxWidth: "400px",
                     }}
                 >
-                    <StyledList sx={{ width: "auto" }}>
+                    <StyledList sx={{ width: "100%", maxWidth: "400px" }}>
                         <ListItem>
                             <ListItemIcon sx={{ fontSize: 20 }}>
                                 {(user != undefined && user.picture != undefined) ? <Image src={user.picture} width="50" height="50"/> : <div>🔥</div>}    
@@ -90,6 +90,13 @@ export default function DraftedPlayersList({ userTeam, open, dispatch }: any) {
                         {open && userTeam && userTeam.map((player: Player) => (
                             <ListItem key={player.id}
                                 sx={{ mb: 0.3 }}
+                                secondaryAction={
+                                    <IconButton edge="end" sx={{ mr: 1.5 }}
+                                        onClick={() => dispatch({ type: ACTIONS.REMOVE_PLAYER, payload: { player: player } })}
+                                    >
+                                        <PersonRemove/>
+                                    </IconButton>
+                                }
                             >
                                 <ListItemAvatar>
                                     <Avatar src={player.photo}/>

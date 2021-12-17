@@ -1,17 +1,20 @@
 import { useEffect, useReducer } from "react";
-import Grid from "@mui/material/Grid";
 import PlayersClient, { Player } from "../../clients/PlayersClient";
-import { Chip, Divider, Container, Typography } from "@mui/material";
+import UserTeamsClient, { UserTeam } from "../../clients/UserTeamsClient";
+import { Chip, Divider, Container, Typography, IconButton, TextField, Grid } from "@mui/material";
+import { SaveAltSharp } from "@mui/icons-material";
 import RadioButtonGroupSimple from "../../components/radioButtons/RadioButtonGroupSimple";
-import PlayersList from "../../components/lists/PlayersList";
-import DraftedPlayersList from "../../components/lists/DraftedPlayersList";
+import PlayersTable from "../../components/tables/PlayersTable";
+import DraftedPlayersTable from "../../components/tables/DraftedPlayersTable";
 
 // ACTIONS variable for reducer function
 export const ACTIONS = {
+    SET_TEAMNAME:  "set-teamname",
     SET_LEAGUE: "set-league",
     SET_PLAYERS: "set-players",
     CLEAR_PLAYERS: "clear-players",
     DRAFT_PLAYER: "draft-player",
+    REMOVE_PLAYER: "remove-player",
     RESET_USERTEAM: "reset-userteam",
     TOGGLE_OPEN: "toggle-open"
 }
@@ -19,6 +22,8 @@ export const ACTIONS = {
 // reducer function
 function reducer(state: State, action: any){
     switch(action.type){
+        case ACTIONS.SET_TEAMNAME:
+            return { ...state, teamName: action.payload.name };
         case ACTIONS.SET_LEAGUE:
             return { ...state, league: action.payload.id };
         case ACTIONS.SET_PLAYERS:
@@ -27,6 +32,9 @@ function reducer(state: State, action: any){
             return { ...state, players: [] };
         case ACTIONS.DRAFT_PLAYER:
             return { ...state, userTeam: [ ...state.userTeam, action.payload.player ] };
+        case ACTIONS.REMOVE_PLAYER:
+            let newUserTeam = state.userTeam.filter(p => p != action.payload.player); 
+            return { ...state, userTeam: [ ...newUserTeam ] };
         case ACTIONS.RESET_USERTEAM:
             return { ...state, userTeam: [] }
         case ACTIONS.TOGGLE_OPEN:
@@ -46,6 +54,7 @@ const RadioButtonsContentLeague = {
 
 // state interface, initialState
 interface State {
+    teamName: string,
     league: string,
     players: Player[],
     userTeam: Player[],
@@ -53,6 +62,7 @@ interface State {
 }
 
 const initialState: State = {
+    teamName: "",
     league: "",
     players: [],
     userTeam: [],
@@ -75,49 +85,88 @@ const TeamSelection = () => {
         fetchData();
     }, [ state.league ]);
 
+    const handleSaveUserTeam = async() => {
+        const userTeam: UserTeam = {
+            name: state.teamName,
+            players: state.userTeam,
+        }
+        const client = new UserTeamsClient(undefined);
+
+        await client.postUserTeamToDb(userTeam);
+    }
+
     return (
-        <div>
-            <Container>
-                <Typography variant="h3"
-                    sx={{ mb: 5, width: "100%", color: "darkred", backgroundColor: "azure", border: "1px solid darkred" }}
-                >
-                    Stellen Sie nun ihr Team zusammen!    
+        <>
+            <main>
+                <Typography variant="h2" gutterBottom>
+                    Bitte stellen Sie ihr Team zusammen!
                 </Typography>
-            </Container>
-            <Grid container rowSpacing={2} columnSpacing={5}
-                justifyContent="center"
-                alignItems="center"
-            >
-                <Grid item xs={12} sm={6}>
-                    <Typography variant="h5">
-                        Bitte wählen Sie eine Liga!
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <RadioButtonGroupSimple content={RadioButtonsContentLeague} dispatch={dispatch}/>
-                </Grid>
-            </Grid>
 
-            <Divider sx={{ mt: 8, mb: 8 }}>
-                <Chip label={(state.league != "") ? "Pick your Team" : "Choose a League"} sx={{ color: "azure", backgroundColor: "darkred" }}/>
-            </Divider>
+                <Grid container justifyContent="center" alignItems="center" spacing={10}>
+                    <Grid item>
+                        <Typography variant="h6">
+                            Wie soll ihr Team heißen?
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <TextField id="name-input" required label="Teamname"/>
+                    </Grid>
+                </Grid>
 
-            {state.league != "" &&(
-                <Grid container
-                justifyContent="center"
-            >
-                {/* List of drafted Players */}
-                <Grid item xs={12} sm={6}>
-                    <DraftedPlayersList userTeam={state.userTeam} open={state.open} dispatch={dispatch} />
+                <IconButton>
+                    <SaveAltSharp onClick={() => dispatch({ type: ACTIONS.SET_TEAMNAME, payload: { name: (document.getElementById("name-input") as HTMLInputElement).value } })}/>
+                </IconButton>
+
+                {state.teamName != "" && (
+                    <>
+                        <Grid container justifyContent="center" alignItems="center" spacing={10}>
+                            <Grid item>
+                                <Typography variant="h6">
+                                    Bitte wählen Sie eine Liga!
+                                </Typography>
+                            </Grid>
+    
+                            <Grid item>
+                                <RadioButtonGroupSimple content={RadioButtonsContentLeague} dispatch={dispatch}/>
+                            </Grid>
+                        </Grid>
+    
+                        <Divider sx={{ mt: 8, mb: 8 }}>
+                            <Chip label="Pick your Team" sx={{ color: "azure", backgroundColor: "darkred" }}/>
+                        </Divider>
+                    </>
+                )}
+
+                {state.league != "" && (
+                    <Grid container justifyContent="center" spacing={10}>
+                        {/* Table of drafted Players */}
+                        <Grid item>
+                            <DraftedPlayersTable userTeam={state.userTeam} open={state.open} dispatch={dispatch} />
+                        </Grid>
+                        {/* Table of available Players */}
+                        <Grid item>
+                            <PlayersTable players={state.players} userTeam={state.userTeam} dispatch={dispatch} />
+                        </Grid>
                 </Grid>
-                {/* List of available Players */}
-                <Grid item xs={12} sm={6}>
-                    <PlayersList players={state.players} userTeam={state.userTeam} dispatch={dispatch} />
-                </Grid>
-            </Grid>
-            )}
-        </div>
+                )}
+
+                <Divider sx={{ mt: 8 }}>
+                    <Chip label="Save Team" sx={{ 
+                        backgroundColor: "darkgray", color: "azure", 
+                        ...(state.userTeam.length == 16 && { backgroundColor: "darkred", color: "azure" }) 
+                        }} 
+                    />
+                </Divider>
+
+                <IconButton disabled={state.userTeam.length < 16 ? true : false}>
+                    <SaveAltSharp onClick={handleSaveUserTeam}/>
+                </IconButton>
+            </main>  
+        </>
     )
 }
 
 export default TeamSelection;
+
+
+

@@ -35,6 +35,10 @@ import { getRequest } from "./"
 //     flag: string,
 // }
 
+export const FullName = (first: string, last: string) => {
+    return `${first} ${last}`;
+}
+
 export interface Player {
     id: number,
     firstName: string,

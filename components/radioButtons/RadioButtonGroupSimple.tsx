@@ -8,6 +8,7 @@ export default function RadioButtonGroupSimple({ content, dispatch }: any) {
         <Box
             sx={{
                 border: "2px solid darkslategrey",
+                borderRadius: 7,
                 width: 220,
                 height: 200,
                 textAlign: "center",

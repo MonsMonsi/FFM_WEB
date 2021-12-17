@@ -34,12 +34,7 @@ export default function PlayersList({ players, userTeam, dispatch }: any) {
         return `${first} ${last}`;
     }
     return (
-        <List
-            sx={{
-                width: "450px",
-                minWidth: "350px"
-            }}
-        >
+        <List sx={{ width: "100%", maxWidth: "400px" }}>
             {players && players.filter((player: Player) => player.position == getPosition() && !userTeam.includes(player)).map((player: Player) => (
                 <ListItem key={player.id}
                     secondaryAction={
